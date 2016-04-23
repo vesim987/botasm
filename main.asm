@@ -2,7 +2,7 @@ section .text
     global main
 main:
     mov ebp, esp
-    
+        
     call irc_connect
     ;TODO: handle errors
     
@@ -96,7 +96,7 @@ strstr:
     inc edi
     cmp cx, dx
     je strstr_loop2
-   strstr_eloop2:
+  strstr_eloop2:
    
     cmp byte [edi], 0
     jne strstr_loop1_continue
@@ -131,8 +131,28 @@ strchr:
     mov esp, ebp
     pop ebp
     ret
+
+;dst, src, length
+memcpy:
+    push ebp
+    mov ebp, esp
     
+    mov esi, eax
     
+  memcpy_loop:
+    mov dl, [ebx]
+    mov byte [eax], dl
+    inc eax
+    inc ebx
+    dec ecx
+    jnz memcpy_loop
+    
+    mov eax, esi
+    mov esp, ebp
+    pop ebp
+    ret
+
+
 ;IRC
 irc_connect:
     push ebp
@@ -190,7 +210,7 @@ irc_send_msg:
     
     ;send \r\n
     mov eax, [irc_socket]
-    mov ebx, irc_msg_rn_nl
+    mov ebx, irc_msg_cr_lf
     mov ecx, 2
     call socket_send
     
@@ -327,7 +347,7 @@ section .data
     irc_msg_user_1 db "USER ", 0
     irc_msg_user_2 db " 8 * :", 0
     irc_msg_join db "JOIN #", 0
-    irc_msg_rn_nl db 13, 10, 0
+    irc_msg_cr_lf db 13, 10, 0
     irc_msg_privmsg_channel_1 db "PRIVMSG #", 0
     irc_msg_privmsg_channel_2 db " :", 0
     irc_msg_quit db "QUIT :Its something", 13, 10, 0
@@ -338,6 +358,4 @@ section .data
     user db "vesim", 0
     real_name db "vesim", 0
     channel db "vesbottest", 0
-    
-    str1 db "This is a simple string", 0
-    str2 db "simple", 0
+   
