@@ -56,6 +56,8 @@ main:
     ret
     
 ;UTILS
+
+;string
 strlen:
     ;push ebp
     ;mov ebp, esp
@@ -71,6 +73,65 @@ strlen:
     ;mov esp, ebp
     ;pop ebp
     ret
+    
+;str1, str2
+strstr:
+    push ebp
+    mov ebp, esp
+    sub esp, 4
+    
+  strstr_loop1:
+    mov esi, eax
+    mov [esp-4], esi
+    mov edi, ebx
+  strstr_loop2:
+    cmp byte [esi], 0
+    je strstr_eloop2
+    cmp byte [edi], 0
+    je strstr_eloop2
+    
+    mov cx, [esi]
+    mov dx, [edi]
+    inc esi
+    inc edi
+    cmp cx, dx
+    je strstr_loop2
+   strstr_eloop2:
+   
+    cmp byte [edi], 0
+    jne strstr_loop1_continue
+    mov eax, [esp-4]
+    jmp strstr_end
+    
+  strstr_loop1_continue:
+    inc eax
+    cmp byte [eax], 0
+    jnz strstr_loop1
+    
+    xor eax, eax    
+  strstr_end:
+    mov esp, ebp
+    pop ebp
+    ret
+    
+;str, character<bl>
+strchr:
+    push ebp
+    mov ebp, esp
+    
+  strchr_loop:
+    inc eax
+    cmp byte[eax], bl
+    je strchr_end
+    cmp byte [eax], 0
+    jne strchr_loop
+    
+    xor eax, eax
+  strchr_end:
+    mov esp, ebp
+    pop ebp
+    ret
+    
     
 ;IRC
 irc_connect:
@@ -277,3 +338,6 @@ section .data
     user db "vesim", 0
     real_name db "vesim", 0
     channel db "vesbottest", 0
+    
+    str1 db "This is a simple string", 0
+    str2 db "simple", 0
